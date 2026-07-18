@@ -158,7 +158,7 @@ body{
   background:#ffffff;
   display:flex;align-items:center;justify-content:center;
   color:#3a2c00;
-  box-shadow:0 0 8px rgba(213, 7, 7, 0.959);
+  box-shadow:0 0 8px rgba(35, 190, 211, 0.959);
   transform:translateX(0);
   transition:transform .3s cubic-bezier(.4,0,.2,1), background .3s ease, box-shadow .3s ease;
 }

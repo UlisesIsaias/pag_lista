@@ -21,6 +21,19 @@
   ];
   const CAT_ICON = Object.fromEntries(GASTO_CATEGORIAS.map(c => [c.label, c.icon]));
 
+  // Mapeo de categorías de artículos (Hoy/Después) -> categorías de gasto,
+  // usado cuando un artículo comprado en "Hoy" se convierte en gasto automático.
+  const ITEM_TO_GASTO_CAT = {
+    '🛒 General': 'Otro',
+    '🥦 Despensa': 'Comida',
+    '🧴 Limpieza': 'Otro',
+    '💊 Salud': 'Salud',
+    '👕 Personal': 'Ropa/Personal',
+    '🏠 Hogar': 'Renta/Servicios',
+    '✨ Otro': 'Otro'
+  };
+  function mapItemCatToGastoCat(cat) { return ITEM_TO_GASTO_CAT[cat] || 'Otro'; }
+
   const today = new Date();
 
   let data = loadData();
@@ -91,7 +104,12 @@
   }
 
   // ================= SHOPPING LISTS (hoy / despues) =================
-  function openItemForm(tab) { $(`itemForm-${tab}`).classList.remove('hidden'); }
+  function openItemForm(tab) {
+    const form = $(`itemForm-${tab}`);
+    delete form.dataset.editingId;
+    form.querySelector('.btn-primary').textContent = 'Guardar artículo';
+    form.classList.remove('hidden');
+  }
   function closeItemForm(tab) {
     const form = $(`itemForm-${tab}`);
     form.classList.add('hidden');
@@ -100,39 +118,121 @@
     form.querySelector('.f-precio').value = '';
     form.querySelector('.f-notas').value = '';
     form.querySelector('.f-categoria').selectedIndex = 0;
+    delete form.dataset.editingId;
+    form.querySelector('.btn-primary').textContent = 'Guardar artículo';
+  }
+  function openEditItem(tab, item) {
+    const form = $(`itemForm-${tab}`);
+    form.dataset.editingId = item.id;
+    form.querySelector('.f-nombre').value = item.nombre;
+    form.querySelector('.f-cantidad').value = item.cantidad;
+    form.querySelector('.f-precio').value = item.precio != null ? item.precio : '';
+    form.querySelector('.f-categoria').value = item.categoria;
+    form.querySelector('.f-notas').value = item.notas || '';
+    form.querySelector('.btn-primary').textContent = 'Guardar cambios';
+    form.classList.remove('hidden');
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   function addItem(tab) {
     const form = $(`itemForm-${tab}`);
     const nombre = form.querySelector('.f-nombre').value.trim();
     if (!nombre) return;
-    const item = {
-      id: uid(),
-      nombre,
-      cantidad: parseInt(form.querySelector('.f-cantidad').value, 10) || 1,
-      precio: form.querySelector('.f-precio').value ? parseFloat(form.querySelector('.f-precio').value) : null,
-      categoria: form.querySelector('.f-categoria').value,
-      notas: form.querySelector('.f-notas').value.trim(),
-      comprado: false,
-      createdAt: Date.now()
-    };
-    data[tab].push(item);
+
+    const cantidad = parseInt(form.querySelector('.f-cantidad').value, 10) || 1;
+    const precio = form.querySelector('.f-precio').value ? parseFloat(form.querySelector('.f-precio').value) : null;
+    const categoria = form.querySelector('.f-categoria').value;
+    const notas = form.querySelector('.f-notas').value.trim();
+
+    const editingId = form.dataset.editingId;
+    if (editingId) {
+      const item = data[tab].find(i => i.id === editingId);
+      if (item) {
+        item.nombre = nombre;
+        item.cantidad = cantidad;
+        item.precio = precio;
+        item.categoria = categoria;
+        item.notas = notas;
+        // si el artículo ya generó un gasto automático, mantenlo sincronizado
+        if (item.gastoId) {
+          const gasto = data.gastos.find(g => g.id === item.gastoId);
+          if (gasto) {
+            gasto.nombre = nombre;
+            gasto.monto = precio ? precio * cantidad : gasto.monto;
+            gasto.categoria = mapItemCatToGastoCat(categoria);
+          }
+        }
+      }
+    } else {
+      data[tab].push({
+        id: uid(),
+        nombre,
+        cantidad,
+        precio,
+        categoria,
+        notas,
+        comprado: false,
+        gastoId: null,
+        createdAt: Date.now()
+      });
+    }
+
     saveData();
     closeItemForm(tab);
     renderList(tab);
+    if (editingId) renderGastos();
   }
+
   function deleteItem(tab, id) {
+    const item = data[tab].find(i => i.id === id);
+    if (item && item.gastoId) {
+      data.gastos = data.gastos.filter(g => g.id !== item.gastoId);
+    }
     data[tab] = data[tab].filter(i => i.id !== id);
     saveData();
     renderList(tab);
+    renderGastos();
   }
+
   function markBought(tab, id) {
     const item = data[tab].find(i => i.id === id);
-    if (item && !item.comprado) { item.comprado = true; saveData(); renderList(tab); }
+    if (!item || item.comprado) return;
+    item.comprado = true;
+
+    // Al comprar un artículo de HOY con precio, se registra como gasto automáticamente.
+    if (tab === 'hoy' && item.precio) {
+      const gasto = {
+        id: uid(),
+        categoria: mapItemCatToGastoCat(item.categoria),
+        nombre: item.nombre,
+        monto: item.precio * (item.cantidad || 1),
+        fecha: isoDate(today.getFullYear(), today.getMonth() + 1, today.getDate()),
+        nota: item.notas || '',
+        createdAt: Date.now(),
+        fromItemId: item.id
+      };
+      data.gastos.push(gasto);
+      item.gastoId = gasto.id;
+    }
+
+    saveData();
+    renderList(tab);
+    if (tab === 'hoy') renderGastos();
   }
+
   function unmarkBought(tab, id) {
     const item = data[tab].find(i => i.id === id);
-    if (item && item.comprado) { item.comprado = false; saveData(); renderList(tab); }
+    if (!item || !item.comprado) return;
+    item.comprado = false;
+
+    if (item.gastoId) {
+      data.gastos = data.gastos.filter(g => g.id !== item.gastoId);
+      item.gastoId = null;
+    }
+
+    saveData();
+    renderList(tab);
+    if (tab === 'hoy') renderGastos();
   }
 
   function renderList(tab) {
@@ -185,9 +285,13 @@
   function buildItemCard(tab, item) {
     const card = document.createElement('div');
     card.className = 'item-card' + (item.comprado ? ' bought' : '');
+    card.style.position = 'relative';
     const metaParts = [`x${item.cantidad}`];
     if (item.precio) metaParts.push(`MX$${item.precio.toFixed(2)}`);
     card.innerHTML = `
+      <button class="edit-btn" aria-label="Editar" style="position:absolute; top:8px; right:32px; background:transparent; border:none; cursor:pointer; color:var(--text-dim); padding:4px; display:flex; z-index:2;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <button class="delete-btn" aria-label="Eliminar">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
       </button>
@@ -195,11 +299,13 @@
       <p class="item-name">${escapeHtml(item.nombre)}</p>
       <div class="item-meta">${metaParts.map((m, idx) => idx === 0 ? m : `<span class="dot">·</span>${m}`).join(' ')}</div>
       ${item.notas ? `<p class="item-notes">"${escapeHtml(item.notas)}"</p>` : ''}
+      ${tab === 'hoy' && item.gastoId ? `<p class="item-notes" style="opacity:.7;">💸 Registrado en gastos</p>` : ''}
       <div class="item-status">
         <span class="status-text">${item.comprado ? 'Comprado' : 'Pendiente'}</span>
         <span class="check-circle"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#06120b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </div>`;
     card.querySelector('.delete-btn').addEventListener('click', (e) => { e.stopPropagation(); deleteItem(tab, item.id); });
+    card.querySelector('.edit-btn').addEventListener('click', (e) => { e.stopPropagation(); openEditItem(tab, item); });
     card.addEventListener('click', () => markBought(tab, item.id));
     card.addEventListener('dblclick', () => unmarkBought(tab, item.id));
     return card;
@@ -326,20 +432,32 @@
     row.className = 'mv-row';
     const d = new Date(g.fecha + 'T00:00:00');
     const fechaFmt = `${d.getDate()} ${MESES_ABR[d.getMonth()]}`;
+    const titulo = g.nombre ? g.nombre : g.categoria;
+    const subtitulo = [g.nombre ? g.categoria : null, fechaFmt, g.nota || null].filter(Boolean).join(' · ');
     row.innerHTML = `
       <span class="mv-icon">${CAT_ICON[g.categoria] || '✨'}</span>
       <div class="mv-info">
-        <div class="mv-cat">${escapeHtml(g.categoria)}</div>
-        <div class="mv-meta">${fechaFmt}${g.nota ? ' · ' + escapeHtml(g.nota) : ''}</div>
+        <div class="mv-cat">${escapeHtml(titulo)}</div>
+        <div class="mv-meta">${escapeHtml(subtitulo)}</div>
       </div>
       <span class="mv-amt">${fmtMoney(g.monto)}</span>
+      <button class="mv-edit" aria-label="Editar" style="background:transparent; border:none; cursor:pointer; color:var(--text-dim); padding:4px; display:flex;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <button class="mv-delete" aria-label="Eliminar">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>`;
+    row.querySelector('.mv-edit').addEventListener('click', () => openEditGasto(g));
     row.querySelector('.mv-delete').addEventListener('click', () => {
+      // si este gasto vino de un artículo de "Hoy", desvincúlalo para no dejar referencias rotas
+      if (g.fromItemId) {
+        const item = data.hoy.find(i => i.id === g.fromItemId);
+        if (item) item.gastoId = null;
+      }
       data.gastos = data.gastos.filter(x => x.id !== g.id);
       saveData();
       renderGastos();
+      if (g.fromItemId) renderList('hoy');
     });
     return row;
   }
@@ -418,27 +536,66 @@
 
   function addGasto() {
     const categoria = $('gCategoria').value;
+    const nombre = $('gDescripcion').value.trim();
     const monto = parseFloat($('gMonto').value);
     const fecha = $('gFecha').value;
+    const nota = $('gNota').value.trim();
     if (!categoria || !monto || !fecha) return;
-    data.gastos.push({
-      id: uid(),
-      categoria,
-      monto,
-      fecha,
-      nota: $('gNota').value.trim(),
-      createdAt: Date.now()
-    });
+
+    const form = $('gastoForm');
+    const editingId = form.dataset.editingId;
+    if (editingId) {
+      const g = data.gastos.find(x => x.id === editingId);
+      if (g) {
+        g.categoria = categoria;
+        g.nombre = nombre;
+        g.monto = monto;
+        g.fecha = fecha;
+        g.nota = nota;
+      }
+    } else {
+      data.gastos.push({
+        id: uid(),
+        categoria,
+        nombre,
+        monto,
+        fecha,
+        nota,
+        createdAt: Date.now()
+      });
+    }
+
     saveData();
     closeGastoForm();
     renderGastos();
   }
-  function openGastoForm() { $('gastoForm').classList.remove('hidden'); }
+  function openGastoForm() {
+    const form = $('gastoForm');
+    delete form.dataset.editingId;
+    form.querySelector('.btn-primary').textContent = 'Guardar gasto';
+    form.classList.remove('hidden');
+  }
   function closeGastoForm() {
-    $('gastoForm').classList.add('hidden');
+    const form = $('gastoForm');
+    form.classList.add('hidden');
     $('gMonto').value = '';
+    $('gDescripcion').value = '';
     $('gNota').value = '';
     $('gCategoria').selectedIndex = 0;
+    delete form.dataset.editingId;
+    form.querySelector('.btn-primary').textContent = 'Guardar gasto';
+  }
+  function openEditGasto(g) {
+    const form = $('gastoForm');
+    form.dataset.editingId = g.id;
+    $('gCategoria').value = g.categoria;
+    $('gDescripcion').value = g.nombre || '';
+    $('gMonto').value = g.monto;
+    $('gFecha').value = g.fecha;
+    $('gNota').value = g.nota || '';
+    form.querySelector('.btn-primary').textContent = 'Guardar cambios';
+    form.classList.remove('hidden');
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   function bindGastoEvents() {
@@ -458,16 +615,16 @@
   }
 
   // ================= INIT =================
- function bindNavEvents() {
-  // Nuevos top links + móviles
-  $$('.top-link, .side-link, .mobile-link').forEach(btn => {
-    btn.addEventListener('click', () => switchSection(btn.dataset.section));
-  });
+  function bindNavEvents() {
+    // Nuevos top links + móviles
+    $$('.top-link, .side-link, .mobile-link').forEach(btn => {
+      btn.addEventListener('click', () => switchSection(btn.dataset.section));
+    });
 
-  $('themeToggle').addEventListener('click', toggleTheme);
-  const mobileToggle = $('themeToggleMobile');
-  if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
-}
+    $('themeToggle').addEventListener('click', toggleTheme);
+    const mobileToggle = $('themeToggleMobile');
+    if (mobileToggle) mobileToggle.addEventListener('click', toggleTheme);
+  }
 
   function init() {
     initDate();

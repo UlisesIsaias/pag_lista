@@ -14,9 +14,9 @@
   --accent-soft:rgba(47,125,255,0.14);
   --accent-border:rgba(47,125,255,0.4);
   --accent-glow:rgba(47,125,255,0.5);
-  --positive:#22e6b0;
-  --positive-glow:rgba(34,230,176,0.45);
-  --positive-bg:rgba(34,230,176,0.1);
+  --positive:#2bff7a;
+  --positive-glow:rgba(43,255,122,0.55);
+  --positive-bg:rgba(43,255,122,0.12);
   --negative:#ff5470;
   --negative-bg:rgba(255,84,112,0.1);
   --radius:14px;
@@ -42,9 +42,9 @@
   --accent-soft:rgba(28,95,224,0.09);
   --accent-border:rgba(28,95,224,0.3);
   --accent-glow:rgba(28,95,224,0.28);
-  --positive:#0aa87c;
-  --positive-glow:rgba(10,168,124,0.22);
-  --positive-bg:rgba(10,168,124,0.08);
+  --positive:#12d96a;
+  --positive-glow:rgba(18,217,106,0.3);
+  --positive-bg:rgba(18,217,106,0.1);
   --negative:#e23b58;
   --negative-bg:rgba(226,59,88,0.08);
 }
@@ -155,16 +155,18 @@ body{
 .theme-toggle-knob{
   width:18px;height:18px;
   border-radius:50%;
-  background:#f0c26b;
+  background:#ffffff;
   display:flex;align-items:center;justify-content:center;
   color:#3a2c00;
+  box-shadow:0 0 8px rgba(213, 7, 7, 0.959);
   transform:translateX(0);
-  transition:transform .3s cubic-bezier(.4,0,.2,1), background .3s ease;
+  transition:transform .3s cubic-bezier(.4,0,.2,1), background .3s ease, box-shadow .3s ease;
 }
 [data-theme="light"] .theme-toggle-knob{
   transform:translateX(18px);
   background:#241d18;
   color:#e8dcc8;
+  box-shadow:none;
 }
 
 .today-date{font-size:13px;color:var(--text-faint);font-weight:500;}

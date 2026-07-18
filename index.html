@@ -48,7 +48,7 @@
           </svg>
         </span>
       </button>
-    </div>
+    </div> 
   </header>
 
   <!-- ============ MOBILE NAV (solo en móviles) ============ -->
@@ -56,251 +56,248 @@
     <button class="mobile-link active" data-section="hoy">Hoy</button>
     <button class="mobile-link" data-section="gastos">Gastos</button>
     <button class="mobile-link" data-section="despues">Después</button>
-    <button class="theme-toggle mobile-theme" id="themeToggleMobile">
+    <!-- <button class="theme-toggle mobile-theme" id="themeToggleMobile">
       <span class="theme-toggle-knob">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="currentColor"/></svg>
       </span>
-    </button>
+    </button> -->
   </nav>
 
   <!-- ============ MAIN CONTENT ============ -->
   <main class="content">
-    <!-- ... todo el contenido de las secciones se queda IGUAL ... -->
 
-    <!-- ============ MAIN CONTENT ============ -->
-    <main class="content">
-
-      <!-- ---------- SECTION: HOY / DESPUÉS (shared template, two instances) ---------- -->
-      <section class="panel" id="panel-hoy" data-panel="hoy">
-        <header class="panel-head">
-          <div>
-            <p class="eyebrow">Lista de compras</p>
-            <h1 class="panel-title">Por comprar hoy</h1>
-          </div>
-        </header>
-
-        <div class="statement-row" id="hoyStatRow">
-          <div class="stat-block">
-            <span class="stat-label">Progreso</span>
-            <span class="stat-value mono" id="hoyPct">0%</span>
-          </div>
-          <div class="stat-block">
-            <span class="stat-label">Comprados</span>
-            <span class="stat-value mono"><span id="hoyDone">0</span>/<span id="hoyTotal">0</span></span>
-          </div>
-          <div class="stat-block">
-            <span class="stat-label">Estimado</span>
-            <span class="stat-value mono" id="hoyEstimado">MX$0.00</span>
-          </div>
+    <!-- ---------- SECTION: HOY / DESPUÉS (shared template, two instances) ---------- -->
+    <section class="panel" id="panel-hoy" data-panel="hoy">
+      <header class="panel-head">
+        <div>
+          <p class="eyebrow">Lista de compras</p>
+          <h1 class="panel-title">Por comprar hoy</h1>
         </div>
-        <div class="progress-bar"><div class="progress-fill" id="hoyProgressFill"></div></div>
+      </header>
 
-        <div class="list-toolbar">
-          <span class="section-label">Artículos</span>
-          <button class="btn-add" data-open-item-form="hoy">+ Agregar artículo</button>
+      <div class="statement-row" id="hoyStatRow">
+        <div class="stat-block">
+          <span class="stat-label">Progreso</span>
+          <span class="stat-value mono" id="hoyPct">0%</span>
         </div>
-
-        <form class="item-form hidden" id="itemForm-hoy" data-item-form="hoy">
-          <div class="form-grid">
-            <input type="text" class="f-nombre" placeholder="¿Qué necesitas comprar?" required maxlength="60">
-            <input type="number" class="f-cantidad" placeholder="Cant." min="1" value="1">
-            <input type="number" class="f-precio" placeholder="Precio MX$" min="0" step="0.01">
-            <select class="f-categoria">
-              <option value="🛒 General">🛒 General</option>
-              <option value="🥦 Despensa">🥦 Despensa</option>
-              <option value="🧴 Limpieza">🧴 Limpieza</option>
-              <option value="💊 Salud">💊 Salud</option>
-              <option value="👕 Personal">👕 Personal</option>
-              <option value="🏠 Hogar">🏠 Hogar</option>
-              <option value="✨ Otro">✨ Otro</option>
-            </select>
-          </div>
-          <input type="text" class="f-notas" placeholder="Nota (opcional) — marca, tamaño, tienda...">
-          <div class="form-actions">
-            <button type="button" class="btn-ghost" data-cancel-item-form="hoy">Cancelar</button>
-            <button type="submit" class="btn-primary">Guardar artículo</button>
-          </div>
-        </form>
-
-        <div class="cards-grid" id="pendingGrid-hoy"></div>
-        <div class="empty-state hidden" id="emptyState-hoy">
-          <div class="empty-icon">🛍️</div>
-          <h3>Todavía no tienes artículos</h3>
-          <p>Agrega el primero para armar tu lista de hoy.</p>
-          <button class="btn-primary" data-open-item-form="hoy">+ Agregar artículo</button>
+        <div class="stat-block">
+          <span class="stat-label">Comprados</span>
+          <span class="stat-value mono"><span id="hoyDone">0</span>/<span id="hoyTotal">0</span></span>
         </div>
-
-        <div class="done-section hidden" id="doneSection-hoy">
-          <button class="done-toggle" data-done-toggle="hoy">
-            <span id="doneToggleLabel-hoy">Comprados (0)</span>
-            <svg width="13" height="13" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="cards-grid done-grid hidden" id="doneGrid-hoy"></div>
+        <div class="stat-block">
+          <span class="stat-label">Estimado</span>
+          <span class="stat-value mono" id="hoyEstimado">MX$0.00</span>
         </div>
-      </section>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="hoyProgressFill"></div></div>
 
-      <section class="panel hidden" id="panel-despues" data-panel="despues">
-        <header class="panel-head">
-          <div>
-            <p class="eyebrow">Lista de compras</p>
-            <h1 class="panel-title">Para comprar después</h1>
-          </div>
-        </header>
+      <div class="list-toolbar">
+        <span class="section-label">Artículos</span>
+        <button class="btn-add" data-open-item-form="hoy">+ Agregar artículo</button>
+      </div>
 
-        <p class="panel-note">Cosas que no necesitas hoy, pero quieres tener anotadas para cuando salgas.</p>
-
-        <div class="list-toolbar">
-          <span class="section-label">Artículos</span>
-          <button class="btn-add" data-open-item-form="despues">+ Agregar artículo</button>
+      <form class="item-form hidden" id="itemForm-hoy" data-item-form="hoy">
+        <div class="form-grid">
+          <input type="text" class="f-nombre" placeholder="¿Qué necesitas comprar?" required maxlength="60">
+          <input type="number" class="f-cantidad" placeholder="Cant." min="1" value="1">
+          <input type="number" class="f-precio" placeholder="Precio MX$" min="0" step="0.01">
+          <select class="f-categoria">
+            <option value="🛒 General">🛒 General</option>
+            <option value="🥦 Despensa">🥦 Despensa</option>
+            <option value="🧴 Limpieza">🧴 Limpieza</option>
+            <option value="💊 Salud">💊 Salud</option>
+            <option value="👕 Personal">👕 Personal</option>
+            <option value="🏠 Hogar">🏠 Hogar</option>
+            <option value="✨ Otro">✨ Otro</option>
+          </select>
         </div>
-
-        <form class="item-form hidden" id="itemForm-despues" data-item-form="despues">
-          <div class="form-grid">
-            <input type="text" class="f-nombre" placeholder="¿Qué necesitas comprar?" required maxlength="60">
-            <input type="number" class="f-cantidad" placeholder="Cant." min="1" value="1">
-            <input type="number" class="f-precio" placeholder="Precio MX$" min="0" step="0.01">
-            <select class="f-categoria">
-              <option value="🛒 General">🛒 General</option>
-              <option value="🥦 Despensa">🥦 Despensa</option>
-              <option value="🧴 Limpieza">🧴 Limpieza</option>
-              <option value="💊 Salud">💊 Salud</option>
-              <option value="👕 Personal">👕 Personal</option>
-              <option value="🏠 Hogar">🏠 Hogar</option>
-              <option value="✨ Otro">✨ Otro</option>
-            </select>
-          </div>
-          <input type="text" class="f-notas" placeholder="Nota (opcional) — marca, tamaño, tienda...">
-          <div class="form-actions">
-            <button type="button" class="btn-ghost" data-cancel-item-form="despues">Cancelar</button>
-            <button type="submit" class="btn-primary">Guardar artículo</button>
-          </div>
-        </form>
-
-        <div class="cards-grid" id="pendingGrid-despues"></div>
-        <div class="empty-state hidden" id="emptyState-despues">
-          <div class="empty-icon">🗒️</div>
-          <h3>Nada pendiente para después</h3>
-          <p>Anota aquí lo que se te vaya ocurriendo.</p>
-          <button class="btn-primary" data-open-item-form="despues">+ Agregar artículo</button>
+        <input type="text" class="f-notas" placeholder="Nota (opcional) — marca, tamaño, tienda...">
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" data-cancel-item-form="hoy">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar artículo</button>
         </div>
+      </form>
 
-        <div class="done-section hidden" id="doneSection-despues">
-          <button class="done-toggle" data-done-toggle="despues">
-            <span id="doneToggleLabel-despues">Comprados (0)</span>
-            <svg width="13" height="13" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="cards-grid done-grid hidden" id="doneGrid-despues"></div>
+      <div class="cards-grid" id="pendingGrid-hoy"></div>
+      <div class="empty-state hidden" id="emptyState-hoy">
+        <div class="empty-icon">🛍️</div>
+        <h3>Todavía no tienes artículos</h3>
+        <p>Agrega el primero para armar tu lista de hoy.</p>
+        <button class="btn-primary" data-open-item-form="hoy">+ Agregar artículo</button>
+      </div>
+
+      <div class="done-section hidden" id="doneSection-hoy">
+        <button class="done-toggle" data-done-toggle="hoy">
+          <span id="doneToggleLabel-hoy">Comprados (0)</span>
+          <svg width="13" height="13" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="cards-grid done-grid hidden" id="doneGrid-hoy"></div>
+      </div>
+    </section>
+
+    <section class="panel hidden" id="panel-despues" data-panel="despues">
+      <header class="panel-head">
+        <div>
+          <p class="eyebrow">Lista de compras</p>
+          <h1 class="panel-title">Para comprar después</h1>
         </div>
-      </section>
+      </header>
 
-      <!-- ---------- SECTION: GASTOS ---------- -->
-      <section class="panel hidden" id="panel-gastos" data-panel="gastos">
-        <header class="panel-head">
-          <div>
-            <p class="eyebrow">Control de gastos</p>
-            <h1 class="panel-title" id="gastosTitle">Julio 2026</h1>
-          </div>
-          <div class="gastos-view-toggle">
-            <button class="pill active" data-gview="mes">Mes</button>
-            <button class="pill" data-gview="año">Año</button>
-          </div>
-        </header>
+      <p class="panel-note">Cosas que no necesitas hoy, pero quieres tener anotadas para cuando salgas.</p>
 
-        <!-- MES VIEW -->
-        <div id="gview-mes">
-          <div class="period-nav">
-            <button class="nav-arrow" id="mesPrev" aria-label="Mes anterior">‹</button>
-            <span class="period-label" id="mesLabel">Julio 2026</span>
-            <button class="nav-arrow" id="mesNext" aria-label="Mes siguiente">›</button>
-            <button class="link-btn" id="verAñoBtn">Ver año completo →</button>
-          </div>
+      <div class="list-toolbar">
+        <span class="section-label">Artículos</span>
+        <button class="btn-add" data-open-item-form="despues">+ Agregar artículo</button>
+      </div>
 
-          <div class="kpi-row">
-            <div class="kpi-card">
-              <span class="kpi-label">Total del mes</span>
-              <span class="kpi-value mono" id="kpiMesTotal">MX$0.00</span>
-            </div>
-            <div class="kpi-card">
-              <span class="kpi-label">Promedio diario</span>
-              <span class="kpi-value mono" id="kpiMesPromedio">MX$0.00</span>
-            </div>
-            <div class="kpi-card">
-              <span class="kpi-label">Categoría principal</span>
-              <span class="kpi-value" id="kpiMesTop">—</span>
-            </div>
-          </div>
+      <form class="item-form hidden" id="itemForm-despues" data-item-form="despues">
+        <div class="form-grid">
+          <input type="text" class="f-nombre" placeholder="¿Qué necesitas comprar?" required maxlength="60">
+          <input type="number" class="f-cantidad" placeholder="Cant." min="1" value="1">
+          <input type="number" class="f-precio" placeholder="Precio MX$" min="0" step="0.01">
+          <select class="f-categoria">
+            <option value="🛒 General">🛒 General</option>
+            <option value="🥦 Despensa">🥦 Despensa</option>
+            <option value="🧴 Limpieza">🧴 Limpieza</option>
+            <option value="💊 Salud">💊 Salud</option>
+            <option value="👕 Personal">👕 Personal</option>
+            <option value="🏠 Hogar">🏠 Hogar</option>
+            <option value="✨ Otro">✨ Otro</option>
+          </select>
+        </div>
+        <input type="text" class="f-notas" placeholder="Nota (opcional) — marca, tamaño, tienda...">
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" data-cancel-item-form="despues">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar artículo</button>
+        </div>
+      </form>
 
-          <div class="charts-row">
-            <div class="chart-card">
-              <span class="chart-title">Por categoría</span>
-              <div id="catBreakdown" class="cat-breakdown"></div>
-              <p class="chart-empty hidden" id="catBreakdownEmpty">Sin gastos registrados este mes.</p>
-            </div>
-            <div class="chart-card">
-              <span class="chart-title">Por día</span>
-              <div id="dayChart" class="day-chart"></div>
-            </div>
-          </div>
+      <div class="cards-grid" id="pendingGrid-despues"></div>
+      <div class="empty-state hidden" id="emptyState-despues">
+        <div class="empty-icon">🗒️</div>
+        <h3>Nada pendiente para después</h3>
+        <p>Anota aquí lo que se te vaya ocurriendo.</p>
+        <button class="btn-primary" data-open-item-form="despues">+ Agregar artículo</button>
+      </div>
 
-          <div class="list-toolbar">
-            <span class="section-label">Movimientos</span>
-            <button class="btn-add" id="openGastoForm">+ Agregar gasto</button>
-          </div>
+      <div class="done-section hidden" id="doneSection-despues">
+        <button class="done-toggle" data-done-toggle="despues">
+          <span id="doneToggleLabel-despues">Comprados (0)</span>
+          <svg width="13" height="13" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="cards-grid done-grid hidden" id="doneGrid-despues"></div>
+      </div>
+    </section>
 
-          <form class="item-form hidden" id="gastoForm">
-            <div class="form-grid form-grid-gasto">
-              <select id="gCategoria"></select>
-              <input type="number" id="gMonto" placeholder="Monto MX$" min="0" step="0.01" required>
-              <input type="date" id="gFecha" required>
-            </div>
-            <input type="text" id="gNota" placeholder="Nota (opcional) — ej. Pemex, Spotify, cena..." maxlength="80">
-            <div class="form-actions">
-              <button type="button" class="btn-ghost" id="cancelGastoForm">Cancelar</button>
-              <button type="submit" class="btn-primary">Guardar gasto</button>
-            </div>
-          </form>
+    <!-- ---------- SECTION: GASTOS ---------- -->
+    <section class="panel hidden" id="panel-gastos" data-panel="gastos">
+      <header class="panel-head">
+        <div>
+          <p class="eyebrow">Control de gastos</p>
+          <h1 class="panel-title" id="gastosTitle">Julio 2026</h1>
+        </div>
+        <div class="gastos-view-toggle">
+          <button class="pill active" data-gview="mes">Mes</button>
+          <button class="pill" data-gview="año">Año</button>
+        </div>
+      </header>
 
-          <div class="movements" id="movementsList"></div>
-          <p class="chart-empty hidden" id="movementsEmpty">Aún no registras gastos en este mes.</p>
+      <!-- MES VIEW -->
+      <div id="gview-mes">
+        <div class="period-nav">
+          <button class="nav-arrow" id="mesPrev" aria-label="Mes anterior">‹</button>
+          <span class="period-label" id="mesLabel">Julio 2026</span>
+          <button class="nav-arrow" id="mesNext" aria-label="Mes siguiente">›</button>
+          <button class="link-btn" id="verAñoBtn">Ver año completo →</button>
         </div>
 
-        <!-- AÑO VIEW -->
-        <div id="gview-año" class="hidden">
-          <div class="period-nav">
-            <button class="nav-arrow" id="añoPrev" aria-label="Año anterior">‹</button>
-            <span class="period-label" id="añoLabel">2026</span>
-            <button class="nav-arrow" id="añoNext" aria-label="Año siguiente">›</button>
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <span class="kpi-label">Total del mes</span>
+            <span class="kpi-value mono" id="kpiMesTotal">MX$0.00</span>
           </div>
-
-          <div class="kpi-row">
-            <div class="kpi-card">
-              <span class="kpi-label">Total del año</span>
-              <span class="kpi-value mono" id="kpiAñoTotal">MX$0.00</span>
-            </div>
-            <div class="kpi-card">
-              <span class="kpi-label">Vs. año anterior</span>
-              <span class="kpi-value mono" id="kpiAñoComparado">—</span>
-            </div>
-            <div class="kpi-card">
-              <span class="kpi-label">Promedio mensual</span>
-              <span class="kpi-value mono" id="kpiAñoPromedio">MX$0.00</span>
-            </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Promedio diario</span>
+            <span class="kpi-value mono" id="kpiMesPromedio">MX$0.00</span>
           </div>
-
-          <div class="chart-card year-chart-card">
-            <span class="chart-title">Gasto por mes <span class="legend-hint">— toca un mes para ver el detalle</span></span>
-            <div id="yearChart" class="year-chart"></div>
+          <div class="kpi-card">
+            <span class="kpi-label">Categoría principal</span>
+            <span class="kpi-value" id="kpiMesTop">—</span>
           </div>
+        </div>
 
+        <div class="charts-row">
           <div class="chart-card">
-            <span class="chart-title">Por categoría (año completo)</span>
-            <div id="catBreakdownYear" class="cat-breakdown"></div>
-            <p class="chart-empty hidden" id="catBreakdownYearEmpty">Sin gastos registrados este año.</p>
+            <span class="chart-title">Por categoría</span>
+            <div id="catBreakdown" class="cat-breakdown"></div>
+            <p class="chart-empty hidden" id="catBreakdownEmpty">Sin gastos registrados este mes.</p>
+          </div>
+          <div class="chart-card">
+            <span class="chart-title">Por día</span>
+            <div id="dayChart" class="day-chart"></div>
           </div>
         </div>
-      </section>
 
-    </main>
+        <div class="list-toolbar">
+          <span class="section-label">Movimientos</span>
+          <button class="btn-add" id="openGastoForm">+ Agregar gasto</button>
+        </div>
+
+        <form class="item-form hidden" id="gastoForm">
+          <div class="form-grid form-grid-gasto">
+            <select id="gCategoria"></select>
+            <input type="text" id="gDescripcion" placeholder="¿En qué gastaste? (opcional)" maxlength="60">
+            <input type="number" id="gMonto" placeholder="Monto MX$" min="0" step="0.01" required>
+            <input type="date" id="gFecha" required>
+          </div>
+          <input type="text" id="gNota" placeholder="Nota (opcional) — ej. Pemex, Spotify, cena..." maxlength="80">
+          <div class="form-actions">
+            <button type="button" class="btn-ghost" id="cancelGastoForm">Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar gasto</button>
+          </div>
+        </form>
+
+        <div class="movements" id="movementsList"></div>
+        <p class="chart-empty hidden" id="movementsEmpty">Aún no registras gastos en este mes.</p>
+      </div>
+
+      <!-- AÑO VIEW -->
+      <div id="gview-año" class="hidden">
+        <div class="period-nav">
+          <button class="nav-arrow" id="añoPrev" aria-label="Año anterior">‹</button>
+          <span class="period-label" id="añoLabel">2026</span>
+          <button class="nav-arrow" id="añoNext" aria-label="Año siguiente">›</button>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <span class="kpi-label">Total del año</span>
+            <span class="kpi-value mono" id="kpiAñoTotal">MX$0.00</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Vs. año anterior</span>
+            <span class="kpi-value mono" id="kpiAñoComparado">—</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Promedio mensual</span>
+            <span class="kpi-value mono" id="kpiAñoPromedio">MX$0.00</span>
+          </div>
+        </div>
+
+        <div class="chart-card year-chart-card">
+          <span class="chart-title">Gasto por mes <span class="legend-hint">— toca un mes para ver el detalle</span></span>
+          <div id="yearChart" class="year-chart"></div>
+        </div>
+
+        <div class="chart-card">
+          <span class="chart-title">Por categoría (año completo)</span>
+          <div id="catBreakdownYear" class="cat-breakdown"></div>
+          <p class="chart-empty hidden" id="catBreakdownYearEmpty">Sin gastos registrados este año.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
   </div>
 
 <script type="module" src="script.js"></script>
